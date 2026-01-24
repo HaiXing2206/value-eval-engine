@@ -61,11 +61,8 @@ CREATE TABLE IF NOT EXISTS t_caliber_version (
   create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE t_caliber_version
-  ADD COLUMN IF NOT EXISTS missing_policy VARCHAR(16) NOT NULL DEFAULT 'ZERO' AFTER status;
-
-ALTER TABLE t_caliber_version
-  ADD COLUMN IF NOT EXISTS snapshot_json JSON NULL AFTER missing_policy;
+-- NOTE: For existing databases, add missing_policy/snapshot_json via a manual migration.
+-- MySQL does not support "ADD COLUMN IF NOT EXISTS" on all versions.
 
 CREATE TABLE IF NOT EXISTS t_indicator_preprocess_quant (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
