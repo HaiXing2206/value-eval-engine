@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/value_eval?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
-    password: zhaoliang
+    password: root
   jpa:
     hibernate:
       ddl-auto: none

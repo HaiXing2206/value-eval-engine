@@ -45,9 +45,9 @@ public class TaskController {
 
   @GetMapping
   public ApiResp<List<EvalTask>> listTasks(
-      @RequestParam(required = false) String assetId,
-      @RequestParam(required = false) String caliberVersionCode,
-      @RequestParam(defaultValue = "50") int limit) {
+      @RequestParam(name = "assetId", required = false) String assetId,
+      @RequestParam(name = "caliberVersionCode", required = false) String caliberVersionCode,
+      @RequestParam(name = "limit", defaultValue = "50") int limit) {
     return ApiResp.ok(taskQueryRepo.findLatest(assetId, caliberVersionCode, limit));
   }
 
