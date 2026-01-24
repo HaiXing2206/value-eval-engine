@@ -65,7 +65,7 @@ public class CalcService {
       BigDecimal w = wi.getWeight();
       Object raw = req.getValues().get(code);
 
-      BigDecimal score = ruleService.toScore(code, raw);
+      BigDecimal score = ruleService.toScore(code, raw, caliber.getMissingPolicy());
       BigDecimal contrib = score.multiply(w);
 
       total = total.add(contrib);

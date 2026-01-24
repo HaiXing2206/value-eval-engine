@@ -17,14 +17,14 @@ public class IndicatorRuleService {
   /**
    * 把原始值转成 0~100 分
    */
-  public BigDecimal toScore(String indicatorCode, Object rawVal) {
+  public BigDecimal toScore(String indicatorCode, Object rawVal, String missingPolicy) {
     Indicator ind =
         indicatorRepo
             .findByCode(indicatorCode)
             .orElseThrow(() -> new IllegalArgumentException("指标不存在: " + indicatorCode));
 
-    if (rawVal == null) {
-      return BigDecimal.ZERO;
+    if (rawVal == null || String.valueOf(rawVal).trim().isEmpty()) {
+      return handleMissing(ind, missingPolicy);
     }
 
     String type = ind.getMetricType(); // QUANT/QUAL/RULE
@@ -34,6 +34,26 @@ public class IndicatorRuleService {
       case "QUAL" -> scoreQual(indicatorCode, rawVal);
       default -> throw new IllegalArgumentException("暂不支持的指标类型: " + type);
     };
+  }
+
+  private BigDecimal handleMissing(Indicator ind, String missingPolicy) {
+    String code = ind.getCode();
+    String type = ind.getMetricType();
+
+    if ("FAIL".equalsIgnoreCase(missingPolicy)) {
+      throw new IllegalArgumentException("存在缺失指标，按口径策略FAIL终止: " + code);
+    }
+    if ("WORST".equalsIgnoreCase(missingPolicy)) {
+      BigDecimal worst = null;
+      if ("QUAL".equals(type)) {
+        worst = ruleRepo.minQualScore(code);
+      }
+      if ("QUANT".equals(type)) {
+        worst = ruleRepo.minQuantScore(code);
+      }
+      return worst == null ? BigDecimal.ZERO : clamp100(worst);
+    }
+    return BigDecimal.ZERO;
   }
 
   private BigDecimal scoreQual(String indicatorCode, Object rawVal) {

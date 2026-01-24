@@ -36,4 +36,22 @@ public class RuleRepo {
             v);
     return list.isEmpty() ? null : list.get(0);
   }
+
+  public BigDecimal minQualScore(String indicatorCode) {
+    List<BigDecimal> list =
+        jdbc.query(
+            "select min(score) as score from t_indicator_rule_qual where indicator_code=?",
+            (rs, i) -> rs.getBigDecimal("score"),
+            indicatorCode);
+    return list.isEmpty() ? null : list.get(0);
+  }
+
+  public BigDecimal minQuantScore(String indicatorCode) {
+    List<BigDecimal> list =
+        jdbc.query(
+            "select min(score) as score from t_indicator_rule_quant where indicator_code=?",
+            (rs, i) -> rs.getBigDecimal("score"),
+            indicatorCode);
+    return list.isEmpty() ? null : list.get(0);
+  }
 }

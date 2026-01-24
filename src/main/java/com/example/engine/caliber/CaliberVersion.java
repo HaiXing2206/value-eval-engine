@@ -41,6 +41,9 @@ public class CaliberVersion {
   @Column(nullable = false, length = 16)
   private String status = "DRAFT";
 
+  @Column(name = "missing_policy", nullable = false, length = 16)
+  private String missingPolicy = "ZERO";
+
   @Column(name = "create_time", updatable = false)
   private LocalDateTime createTime;
 }
