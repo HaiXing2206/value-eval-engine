@@ -115,4 +115,33 @@ public class CaliberService {
 
     return repo.save(v);
   }
+
+  @Transactional
+  public CaliberVersion updateDraft(String caliberCode, CaliberController.CaliberUpdateReq req) {
+    CaliberVersion v = get(caliberCode);
+    if ("PUBLISHED".equalsIgnoreCase(v.getStatus())) {
+      throw new IllegalArgumentException("已发布口径不可修改，请复制新版本");
+    }
+    if (req.weightVersionCode != null && !req.weightVersionCode.isBlank()) {
+      v.setWeightVersionCode(req.weightVersionCode);
+    }
+    if (req.ruleRemark != null) {
+      v.setRuleRemark(req.ruleRemark);
+    }
+    if (req.missingPolicy != null && !req.missingPolicy.isBlank()) {
+      v.setMissingPolicy(req.missingPolicy);
+    }
+    if (req.levelA != null) {
+      v.setLevelA(req.levelA);
+    }
+    if (req.levelB != null) {
+      v.setLevelB(req.levelB);
+    }
+    if (req.levelC != null) {
+      v.setLevelC(req.levelC);
+    }
+
+    v.setSnapshotJson(null);
+    return repo.save(v);
+  }
 }
