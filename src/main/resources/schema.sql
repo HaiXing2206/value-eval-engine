@@ -1,0 +1,99 @@
+CREATE DATABASE IF NOT EXISTS value_eval DEFAULT CHARSET utf8mb4;
+USE value_eval;
+
+CREATE TABLE IF NOT EXISTS t_indicator (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  code VARCHAR(64) NOT NULL UNIQUE,
+  name VARCHAR(128) NOT NULL,
+  metric_type VARCHAR(16) NOT NULL, -- QUANT/QUAL/RULE
+  unit VARCHAR(32),
+  enabled TINYINT NOT NULL DEFAULT 1,
+  remark VARCHAR(255),
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS t_weight_version (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  version_code VARCHAR(64) NOT NULL UNIQUE,
+  status VARCHAR(16) NOT NULL DEFAULT 'DRAFT', -- DRAFT/PUBLISHED
+  remark VARCHAR(255),
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS t_weight_item (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  version_id BIGINT NOT NULL,
+  indicator_code VARCHAR(64) NOT NULL,
+  weight DECIMAL(18,8) NOT NULL,
+  UNIQUE KEY uk_ver_indicator (version_id, indicator_code),
+  CONSTRAINT fk_weight_ver FOREIGN KEY (version_id) REFERENCES t_weight_version(id)
+);
+
+CREATE TABLE IF NOT EXISTS t_indicator_rule_qual (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  indicator_code VARCHAR(64) NOT NULL,
+  enum_key VARCHAR(64) NOT NULL,
+  score DECIMAL(18,4) NOT NULL,
+  UNIQUE KEY uk_qual (indicator_code, enum_key)
+);
+
+CREATE TABLE IF NOT EXISTS t_indicator_rule_quant (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  indicator_code VARCHAR(64) NOT NULL,
+  min_val DECIMAL(18,8) NOT NULL,
+  max_val DECIMAL(18,8) NOT NULL,
+  score DECIMAL(18,4) NOT NULL,
+  UNIQUE KEY uk_quant (indicator_code, min_val, max_val)
+);
+
+CREATE TABLE IF NOT EXISTS t_caliber_version (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  caliber_code VARCHAR(64) NOT NULL UNIQUE,
+  weight_version_code VARCHAR(64) NOT NULL,
+  rule_remark VARCHAR(255),
+  level_a DECIMAL(18,4) NOT NULL DEFAULT 90.0,
+  level_b DECIMAL(18,4) NOT NULL DEFAULT 75.0,
+  level_c DECIMAL(18,4) NOT NULL DEFAULT 60.0,
+  status VARCHAR(16) NOT NULL DEFAULT 'DRAFT',
+  missing_policy VARCHAR(16) NOT NULL DEFAULT 'ZERO',
+  snapshot_json JSON NULL,
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE t_caliber_version
+  ADD COLUMN IF NOT EXISTS missing_policy VARCHAR(16) NOT NULL DEFAULT 'ZERO' AFTER status;
+
+ALTER TABLE t_caliber_version
+  ADD COLUMN IF NOT EXISTS snapshot_json JSON NULL AFTER missing_policy;
+
+CREATE TABLE IF NOT EXISTS t_indicator_preprocess_quant (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  indicator_code VARCHAR(64) NOT NULL UNIQUE,
+  outlier_policy VARCHAR(16) NOT NULL DEFAULT 'CLAMP',
+  min_val DECIMAL(18,8) NULL,
+  max_val DECIMAL(18,8) NULL
+);
+
+CREATE TABLE IF NOT EXISTS t_eval_task (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  task_name VARCHAR(128) NOT NULL,
+  asset_id VARCHAR(64) NOT NULL,
+  weight_version_code VARCHAR(64) NOT NULL,
+  caliber_version_code VARCHAR(64) NULL,
+  status VARCHAR(16) NOT NULL DEFAULT 'CREATED', -- CREATED/RUNNING/DONE/FAILED
+  input_json JSON,
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS t_eval_result (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  task_id BIGINT NOT NULL UNIQUE,
+  total_score DECIMAL(18,4) NOT NULL,
+  level VARCHAR(8) NOT NULL,
+  detail_json JSON,
+  snapshot_json JSON,
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_task FOREIGN KEY (task_id) REFERENCES t_eval_task(id)
+);
