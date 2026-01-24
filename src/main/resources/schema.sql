@@ -30,11 +30,41 @@ CREATE TABLE IF NOT EXISTS t_weight_item (
   CONSTRAINT fk_weight_ver FOREIGN KEY (version_id) REFERENCES t_weight_version(id)
 );
 
+CREATE TABLE IF NOT EXISTS t_indicator_rule_qual (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  indicator_code VARCHAR(64) NOT NULL,
+  enum_key VARCHAR(64) NOT NULL,
+  score DECIMAL(18,4) NOT NULL,
+  UNIQUE KEY uk_qual (indicator_code, enum_key)
+);
+
+CREATE TABLE IF NOT EXISTS t_indicator_rule_quant (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  indicator_code VARCHAR(64) NOT NULL,
+  min_val DECIMAL(18,8) NOT NULL,
+  max_val DECIMAL(18,8) NOT NULL,
+  score DECIMAL(18,4) NOT NULL,
+  UNIQUE KEY uk_quant (indicator_code, min_val, max_val)
+);
+
+CREATE TABLE IF NOT EXISTS t_caliber_version (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  caliber_code VARCHAR(64) NOT NULL UNIQUE,
+  weight_version_code VARCHAR(64) NOT NULL,
+  rule_remark VARCHAR(255),
+  level_a DECIMAL(18,4) NOT NULL DEFAULT 90.0,
+  level_b DECIMAL(18,4) NOT NULL DEFAULT 75.0,
+  level_c DECIMAL(18,4) NOT NULL DEFAULT 60.0,
+  status VARCHAR(16) NOT NULL DEFAULT 'DRAFT',
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS t_eval_task (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   task_name VARCHAR(128) NOT NULL,
   asset_id VARCHAR(64) NOT NULL,
   weight_version_code VARCHAR(64) NOT NULL,
+  caliber_version_code VARCHAR(64) NULL,
   status VARCHAR(16) NOT NULL DEFAULT 'CREATED', -- CREATED/RUNNING/DONE/FAILED
   input_json JSON,
   create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -28,6 +28,9 @@ public class EvalTask {
   @Column(name = "weight_version_code", nullable = false, length = 64)
   private String weightVersionCode;
 
+  @Column(name = "caliber_version_code", length = 64)
+  private String caliberVersionCode;
+
   @Column(nullable = false, length = 16)
   private String status = "CREATED";
 
