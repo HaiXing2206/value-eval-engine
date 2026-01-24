@@ -44,6 +44,9 @@ public class CaliberVersion {
   @Column(name = "missing_policy", nullable = false, length = 16)
   private String missingPolicy = "ZERO";
 
+  @Column(name = "snapshot_json", columnDefinition = "json")
+  private String snapshotJson;
+
   @Column(name = "create_time", updatable = false)
   private LocalDateTime createTime;
 }

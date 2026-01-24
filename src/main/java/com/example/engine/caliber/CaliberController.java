@@ -30,6 +30,14 @@ public class CaliberController {
     return ApiResp.ok(null);
   }
 
+  @PostMapping("/{caliberCode}/copy")
+  public ApiResp<CaliberVersion> copy(
+      @PathVariable String caliberCode,
+      @RequestParam String newCaliberCode,
+      @RequestParam(required = false) String remark) {
+    return ApiResp.ok(service.copyAsDraft(caliberCode, newCaliberCode, remark));
+  }
+
   @GetMapping("/{caliberCode}")
   public ApiResp<CaliberVersion> get(@PathVariable String caliberCode) {
     return ApiResp.ok(service.get(caliberCode));

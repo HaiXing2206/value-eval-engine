@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RuleController {
 
   private final JdbcTemplate jdbc;
+  private final PreprocessRepo preprocessRepo;
 
   @PostMapping("/qual/{indicatorCode}")
   public ApiResp<Void> upsertQual(
@@ -54,6 +55,13 @@ public class RuleController {
     return ApiResp.ok(null);
   }
 
+  @PostMapping("/preprocess/quant/{indicatorCode}")
+  public ApiResp<Void> upsertQuantPreprocess(
+      @PathVariable String indicatorCode, @RequestBody QuantPreprocessReq req) {
+    preprocessRepo.upsertQuant(indicatorCode, req.outlierPolicy, req.minVal, req.maxVal);
+    return ApiResp.ok(null);
+  }
+
   @Data
   public static class QualItem {
     public String enumKey;
@@ -65,5 +73,12 @@ public class RuleController {
     public BigDecimal minVal;
     public BigDecimal maxVal;
     public BigDecimal score;
+  }
+
+  @Data
+  public static class QuantPreprocessReq {
+    public String outlierPolicy; // CLAMP/FAIL/MARK
+    public BigDecimal minVal;
+    public BigDecimal maxVal;
   }
 }

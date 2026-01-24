@@ -83,13 +83,21 @@ public class ExportService {
 
     if ("detail".equalsIgnoreCase(type)) {
       StringBuilder sb = new StringBuilder();
-      sb.append("taskId,indicatorCode,score,weight,contribution\n");
+      sb.append("taskId,indicatorCode,raw,processed,outlier,missing,score,weight,contribution\n");
       try {
         var arr = om.readTree(result.getDetailJson());
         for (var n : arr) {
           sb.append(task.getId())
               .append(",")
               .append(esc(n.path("code").asText()))
+              .append(",")
+              .append(esc(n.path("raw").toString()))
+              .append(",")
+              .append(n.path("processed").isMissingNode() ? "" : n.path("processed").asText())
+              .append(",")
+              .append(n.path("outlier").asBoolean(false))
+              .append(",")
+              .append(n.path("missing").asBoolean(false))
               .append(",")
               .append(n.path("score").asDouble())
               .append(",")

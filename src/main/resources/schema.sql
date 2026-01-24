@@ -57,11 +57,23 @@ CREATE TABLE IF NOT EXISTS t_caliber_version (
   level_c DECIMAL(18,4) NOT NULL DEFAULT 60.0,
   status VARCHAR(16) NOT NULL DEFAULT 'DRAFT',
   missing_policy VARCHAR(16) NOT NULL DEFAULT 'ZERO',
+  snapshot_json JSON NULL,
   create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE t_caliber_version
   ADD COLUMN IF NOT EXISTS missing_policy VARCHAR(16) NOT NULL DEFAULT 'ZERO' AFTER status;
+
+ALTER TABLE t_caliber_version
+  ADD COLUMN IF NOT EXISTS snapshot_json JSON NULL AFTER missing_policy;
+
+CREATE TABLE IF NOT EXISTS t_indicator_preprocess_quant (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  indicator_code VARCHAR(64) NOT NULL UNIQUE,
+  outlier_policy VARCHAR(16) NOT NULL DEFAULT 'CLAMP',
+  min_val DECIMAL(18,8) NULL,
+  max_val DECIMAL(18,8) NULL
+);
 
 CREATE TABLE IF NOT EXISTS t_eval_task (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,

@@ -16,6 +16,10 @@ public class CalcResponse {
   @Builder
   public static class Item {
     private String code;
+    private Object raw;
+    private Double processed;
+    private Boolean outlier;
+    private Boolean missing;
     private double score;
     private double weight;
     private double contribution;
