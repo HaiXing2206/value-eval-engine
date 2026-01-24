@@ -3,11 +3,13 @@
     <el-aside width="220px">
       <div style="padding: 14px; font-weight: 700;">Value Eval Engine</div>
       <el-menu :default-active="route.path" router>
+        <el-menu-item index="/dashboard">首页看板</el-menu-item>
         <el-menu-item index="/indicators">指标库</el-menu-item>
         <el-menu-item index="/rules">规则配置</el-menu-item>
         <el-menu-item index="/weights">权重版本</el-menu-item>
         <el-menu-item index="/calibers">口径版本</el-menu-item>
         <el-menu-item index="/tasks">评估任务</el-menu-item>
+        <el-menu-item index="/history">任务历史</el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>

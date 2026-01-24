@@ -5,5 +5,7 @@ export const taskApi = {
   getTask: (taskId) => http.get(`/api/v1/task/${taskId}`),
   getResult: (taskId) => http.get(`/api/v1/task/${taskId}/result`),
   exportJson: (taskId, type) =>
-    http.get(`/api/v1/task/${taskId}/export`, { params: { type, format: 'json' } })
+    http.get(`/api/v1/task/${taskId}/export`, { params: { type, format: 'json' } }),
+  list: (params) => http.get('/api/v1/task', { params }),
+  full: (taskId) => http.get(`/api/v1/task/${taskId}/full`)
 }
