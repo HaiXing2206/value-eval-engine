@@ -15,7 +15,6 @@
           <span style="opacity:.7;">{{ username }}</span>
           <el-tag size="small">{{ roleLabel }}</el-tag>
           <el-button link type="primary" @click="onLogout">退出登录</el-button>
-          <span style="opacity:.7;">后端：/api → 8080（Vite Proxy）</span>
         </div>
       </el-header>
       <el-main style="background:#f6f7f9;">
