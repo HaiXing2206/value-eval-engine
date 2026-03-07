@@ -37,9 +37,9 @@ public class EvalTask {
   @Column(name = "input_json", columnDefinition = "json")
   private String inputJson;
 
-  @Column(name = "create_time", updatable = false)
+  @Column(name = "create_time", insertable = false, updatable = false)
   private LocalDateTime createTime;
 
-  @Column(name = "update_time")
+  @Column(name = "update_time", insertable = false, updatable = false)
   private LocalDateTime updateTime;
 }

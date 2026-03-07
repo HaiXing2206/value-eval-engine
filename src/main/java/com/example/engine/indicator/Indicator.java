@@ -33,9 +33,9 @@ public class Indicator {
   private Integer enabled = 1;
   private String remark;
 
-  @Column(name = "create_time", updatable = false)
+  @Column(name = "create_time", insertable = false, updatable = false)
   private LocalDateTime createTime;
 
-  @Column(name = "update_time")
+  @Column(name = "update_time", insertable = false, updatable = false)
   private LocalDateTime updateTime;
 }

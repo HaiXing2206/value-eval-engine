@@ -2,7 +2,7 @@
   <div class="login-page">
     <el-card class="login-card" shadow="hover">
       <template #header>
-        <div class="login-title">Value Eval Engine 注册</div>
+        <div class="login-title">价值评估引擎 注册</div>
       </template>
 
       <el-form ref="formRef" :model="form" :rules="rules" label-position="top" @keyup.enter="onSubmit">

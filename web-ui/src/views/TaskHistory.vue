@@ -19,9 +19,9 @@
       <el-table-column prop="caliberVersionCode" label="口径" width="180" />
       <el-table-column prop="status" label="状态" width="110" />
       <el-table-column prop="createTime" label="创建时间" width="190" />
-      <el-table-column label="操作" width="240">
+      <el-table-column label="操作" width="260">
         <template #default="{row}">
-          <el-button size="small" @click="open(row.id)">详情</el-button>
+          <el-button size="small" :disabled="row.status!=='DONE'" @click="open(row.id)">详情</el-button>
           <el-button size="small" @click="exportType(row.id,'summary')">summary</el-button>
           <el-button size="small" type="success" @click="exportType(row.id,'detail')">detail</el-button>
         </template>
@@ -32,6 +32,15 @@
       <div v-if="full">
         <el-alert type="success" show-icon
           :title="`taskId=${full.task.id} | total=${full.result.totalScore} | level=${full.result.level}`" />
+        <div style="margin-top:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:13px;opacity:.85;">
+          <div>任务名：{{ full.task.taskName }}</div>
+          <div>资产ID：{{ full.task.assetId }}</div>
+          <div>任务状态：{{ full.task.status }}</div>
+          <div>口径：{{ full.task.caliberVersionCode }}</div>
+          <div>权重版本：{{ full.task.weightVersionCode }}</div>
+          <div>任务创建时间：{{ full.task.createTime }}</div>
+          <div>结果创建时间：{{ full.result.createTime }}</div>
+        </div>
         <div style="margin-top:10px;display:flex;gap:10px;">
           <el-button @click="exportType(full.task.id,'summary')">导出 summary.csv</el-button>
           <el-button type="success" @click="exportType(full.task.id,'detail')">导出 detail.csv</el-button>

@@ -32,13 +32,13 @@ public class TaskController {
   }
 
   @GetMapping("/{taskId}")
-  public ApiResp<EvalTask> getTask(@PathVariable Long taskId) {
+  public ApiResp<EvalTask> getTask(@PathVariable("taskId") Long taskId) {
     return ApiResp.ok(
         taskRepo.findById(taskId).orElseThrow(() -> new IllegalArgumentException("任务不存在")));
   }
 
   @GetMapping("/{taskId}/result")
-  public ApiResp<EvalResult> getResult(@PathVariable Long taskId) {
+  public ApiResp<EvalResult> getResult(@PathVariable("taskId") Long taskId) {
     return ApiResp.ok(
         resultRepo.findByTaskId(taskId).orElseThrow(() -> new IllegalArgumentException("结果不存在")));
   }
@@ -52,7 +52,7 @@ public class TaskController {
   }
 
   @GetMapping("/{taskId}/full")
-  public ApiResp<Map<String, Object>> getFull(@PathVariable Long taskId) {
+  public ApiResp<Map<String, Object>> getFull(@PathVariable("taskId") Long taskId) {
     EvalTask t = taskRepo.findById(taskId).orElseThrow(() -> new IllegalArgumentException("任务不存在"));
     EvalResult r =
         resultRepo.findByTaskId(taskId).orElseThrow(() -> new IllegalArgumentException("结果不存在"));

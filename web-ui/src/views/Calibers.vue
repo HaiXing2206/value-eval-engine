@@ -23,10 +23,10 @@
     </div>
 
     <el-form :model="model" label-width="140px" style="max-width:720px;">
-      <el-form-item label="weightVersionCode">
+      <el-form-item label="绑定权重版本号">
         <el-input v-model="model.weightVersionCode" :disabled="model.status==='PUBLISHED'" />
       </el-form-item>
-      <el-form-item label="missingPolicy">
+      <el-form-item label="缺失策略">
         <el-select v-model="model.missingPolicy" style="width:100%" :disabled="model.status==='PUBLISHED'">
           <el-option label="ZERO（缺失=0分）" value="ZERO" />
           <el-option label="WORST（缺失=最差分）" value="WORST" />
@@ -59,10 +59,10 @@
 
   <el-dialog v-model="copyDlg" title="复制新口径（生成草稿）" width="520px">
     <el-form label-width="120px">
-      <el-form-item label="newCaliberCode">
+      <el-form-item label="新口径号">
         <el-input v-model="copyNew" placeholder="CAL_20260124_002" />
       </el-form-item>
-      <el-form-item label="remark">
+      <el-form-item label="备注">
         <el-input v-model="copyRemark" />
       </el-form-item>
     </el-form>

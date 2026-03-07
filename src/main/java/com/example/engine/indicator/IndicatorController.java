@@ -29,12 +29,12 @@ public class IndicatorController {
   }
 
   @PutMapping("/{id}")
-  public ApiResp<Indicator> update(@PathVariable Long id, @RequestBody Indicator patch) {
+  public ApiResp<Indicator> update(@PathVariable("id") Long id, @RequestBody Indicator patch) {
     return ApiResp.ok(service.update(id, patch));
   }
 
   @PostMapping("/{id}/disable")
-  public ApiResp<Void> disable(@PathVariable Long id) {
+  public ApiResp<Void> disable(@PathVariable("id") Long id) {
     service.disable(id);
     return ApiResp.ok(null);
   }

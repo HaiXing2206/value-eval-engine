@@ -28,24 +28,25 @@ public class WeightController {
 
   @PostMapping("/version")
   public ApiResp<WeightVersion> createVersion(
-      @RequestParam String versionCode, @RequestParam(required = false) String remark) {
+      @RequestParam(name = "versionCode") String versionCode,
+      @RequestParam(name = "remark", required = false) String remark) {
     return ApiResp.ok(service.createVersion(versionCode, remark));
   }
 
   @GetMapping("/version/{versionCode}")
-  public ApiResp<WeightVersion> getVersion(@PathVariable String versionCode) {
+  public ApiResp<WeightVersion> getVersion(@PathVariable("versionCode") String versionCode) {
     return ApiResp.ok(service.getByCode(versionCode));
   }
 
   @GetMapping("/version/{versionCode}/items")
-  public ApiResp<List<WeightItem>> listItems(@PathVariable String versionCode) {
+  public ApiResp<List<WeightItem>> listItems(@PathVariable("versionCode") String versionCode) {
     WeightVersion v = service.getByCode(versionCode);
     return ApiResp.ok(service.listItems(v.getId()));
   }
 
   @PostMapping("/version/{versionCode}/items")
   public ApiResp<Void> upsertItems(
-      @PathVariable String versionCode, @RequestBody List<WeightItemReq> items) {
+      @PathVariable("versionCode") String versionCode, @RequestBody List<WeightItemReq> items) {
     WeightVersion v = service.getByCode(versionCode);
     List<WeightItem> its =
         items.stream()
@@ -63,7 +64,7 @@ public class WeightController {
   }
 
   @PostMapping("/version/{versionCode}/publish")
-  public ApiResp<Void> publish(@PathVariable String versionCode) {
+  public ApiResp<Void> publish(@PathVariable("versionCode") String versionCode) {
     service.publish(versionCode);
     return ApiResp.ok(null);
   }

@@ -21,34 +21,34 @@ public class CaliberController {
 
   @PostMapping
   public ApiResp<CaliberVersion> create(
-      @RequestParam String caliberCode,
-      @RequestParam String weightVersionCode,
-      @RequestParam(required = false) String remark) {
+      @RequestParam(name = "caliberCode") String caliberCode,
+      @RequestParam(name = "weightVersionCode") String weightVersionCode,
+      @RequestParam(name = "remark", required = false) String remark) {
     return ApiResp.ok(service.create(caliberCode, weightVersionCode, remark));
   }
 
   @PostMapping("/{caliberCode}/publish")
-  public ApiResp<Void> publish(@PathVariable String caliberCode) {
+  public ApiResp<Void> publish(@PathVariable("caliberCode") String caliberCode) {
     service.publish(caliberCode);
     return ApiResp.ok(null);
   }
 
   @PostMapping("/{caliberCode}/copy")
   public ApiResp<CaliberVersion> copy(
-      @PathVariable String caliberCode,
-      @RequestParam String newCaliberCode,
-      @RequestParam(required = false) String remark) {
+      @PathVariable("caliberCode") String caliberCode,
+      @RequestParam(name = "newCaliberCode") String newCaliberCode,
+      @RequestParam(name = "remark", required = false) String remark) {
     return ApiResp.ok(service.copyAsDraft(caliberCode, newCaliberCode, remark));
   }
 
   @PatchMapping("/{caliberCode}")
   public ApiResp<CaliberVersion> updateDraft(
-      @PathVariable String caliberCode, @RequestBody CaliberUpdateReq req) {
+      @PathVariable("caliberCode") String caliberCode, @RequestBody CaliberUpdateReq req) {
     return ApiResp.ok(service.updateDraft(caliberCode, req));
   }
 
   @GetMapping("/{caliberCode}")
-  public ApiResp<CaliberVersion> get(@PathVariable String caliberCode) {
+  public ApiResp<CaliberVersion> get(@PathVariable("caliberCode") String caliberCode) {
     return ApiResp.ok(service.get(caliberCode));
   }
 

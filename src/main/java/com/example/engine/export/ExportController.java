@@ -24,9 +24,9 @@ public class ExportController {
    */
   @GetMapping("/{taskId}/export")
   public ApiResp<Map<String, Object>> exportJson(
-      @PathVariable Long taskId,
-      @RequestParam(defaultValue = "summary") String type,
-      @RequestParam(defaultValue = "json") String format) {
+      @PathVariable("taskId") Long taskId,
+      @RequestParam(name = "type", defaultValue = "summary") String type,
+      @RequestParam(name = "format", defaultValue = "json") String format) {
     if (!"json".equalsIgnoreCase(format)) {
       throw new IllegalArgumentException("format=csv 请走 /export-file 接口");
     }
@@ -38,9 +38,9 @@ public class ExportController {
    */
   @GetMapping("/{taskId}/export-file")
   public ResponseEntity<byte[]> exportFile(
-      @PathVariable Long taskId,
-      @RequestParam(defaultValue = "summary") String type,
-      @RequestParam(defaultValue = "csv") String format) {
+      @PathVariable("taskId") Long taskId,
+      @RequestParam(name = "type", defaultValue = "summary") String type,
+      @RequestParam(name = "format", defaultValue = "csv") String format) {
 
     if (!"csv".equalsIgnoreCase(format)) {
       throw new IllegalArgumentException("仅支持csv");

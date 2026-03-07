@@ -22,7 +22,7 @@ public class RuleController {
 
   @PostMapping("/qual/{indicatorCode}")
   public ApiResp<Void> upsertQual(
-      @PathVariable String indicatorCode, @RequestBody List<QualItem> items) {
+      @PathVariable("indicatorCode") String indicatorCode, @RequestBody List<QualItem> items) {
     for (QualItem it : items) {
       jdbc.update(
           """
@@ -39,7 +39,7 @@ public class RuleController {
 
   @PostMapping("/quant/{indicatorCode}")
   public ApiResp<Void> upsertQuant(
-      @PathVariable String indicatorCode, @RequestBody List<QuantItem> items) {
+      @PathVariable("indicatorCode") String indicatorCode, @RequestBody List<QuantItem> items) {
     jdbc.update("delete from t_indicator_rule_quant where indicator_code=?", indicatorCode);
     for (QuantItem it : items) {
       jdbc.update(
@@ -57,7 +57,7 @@ public class RuleController {
 
   @PostMapping("/preprocess/quant/{indicatorCode}")
   public ApiResp<Void> upsertQuantPreprocess(
-      @PathVariable String indicatorCode, @RequestBody QuantPreprocessReq req) {
+      @PathVariable("indicatorCode") String indicatorCode, @RequestBody QuantPreprocessReq req) {
     preprocessRepo.upsertQuant(indicatorCode, req.outlierPolicy, req.minVal, req.maxVal);
     return ApiResp.ok(null);
   }

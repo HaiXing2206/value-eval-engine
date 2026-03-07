@@ -1,7 +1,7 @@
 <template>
   <el-container style="height: 100vh;">
     <el-aside width="220px">
-      <div style="padding: 14px; font-weight: 700;">Value Eval Engine</div>
+      <div style="padding: 14px; font-weight: 700;">价值评估引擎</div>
       <el-menu :default-active="route.path" router>
         <el-menu-item v-for="item in menuItems" :key="item.path" :index="item.path">
           {{ item.title }}

@@ -47,6 +47,6 @@ public class CaliberVersion {
   @Column(name = "snapshot_json", columnDefinition = "json")
   private String snapshotJson;
 
-  @Column(name = "create_time", updatable = false)
+  @Column(name = "create_time", insertable = false, updatable = false)
   private LocalDateTime createTime;
 }
