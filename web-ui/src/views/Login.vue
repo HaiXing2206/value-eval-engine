@@ -1,0 +1,89 @@
+<template>
+  <div class="login-page">
+    <el-card class="login-card" shadow="hover">
+      <template #header>
+        <div class="login-title">Value Eval Engine 登录</div>
+      </template>
+
+      <el-form ref="formRef" :model="form" :rules="rules" label-position="top" @keyup.enter="onSubmit">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="form.username" placeholder="请输入用户名" clearable />
+        </el-form-item>
+
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="form.password" type="password" show-password placeholder="请输入密码" clearable />
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary" style="width: 100%;" @click="onSubmit">登录</el-button>
+        </el-form-item>
+      </el-form>
+
+      <div class="tip">演示账号：admin / 123456</div>
+    </el-card>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive } from 'vue'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const formRef = ref()
+
+const form = reactive({
+  username: '',
+  password: ''
+})
+
+const rules = {
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+}
+
+const onSubmit = async () => {
+  const ok = await formRef.value.validate().catch(() => false)
+  if (!ok) {
+    return
+  }
+
+  if (form.username === 'admin' && form.password === '123456') {
+    localStorage.setItem('vee_token', 'demo-token')
+    localStorage.setItem('vee_user', form.username)
+    ElMessage.success('登录成功')
+    router.push('/dashboard')
+    return
+  }
+
+  ElMessage.error('用户名或密码错误')
+}
+</script>
+
+<style scoped>
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.login-card {
+  width: 420px;
+  max-width: calc(100vw - 32px);
+}
+
+.login-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.tip {
+  margin-top: 4px;
+  text-align: center;
+  color: #909399;
+  font-size: 13px;
+}
+</style>

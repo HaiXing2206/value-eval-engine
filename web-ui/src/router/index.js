@@ -7,10 +7,12 @@ import Weights from '../views/Weights.vue'
 import Calibers from '../views/Calibers.vue'
 import Tasks from '../views/Tasks.vue'
 import TaskHistory from '../views/TaskHistory.vue'
+import Login from '../views/Login.vue'
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes: [
+    { path: '/login', component: Login },
     {
       path: '/',
       component: Layout,
@@ -27,3 +29,22 @@ export default createRouter({
     }
   ]
 })
+
+
+router.beforeEach((to) => {
+  const token = localStorage.getItem('vee_token')
+  if (to.path === '/login') {
+    if (token) {
+      return '/dashboard'
+    }
+    return true
+  }
+
+  if (!token) {
+    return '/login'
+  }
+
+  return true
+})
+
+export default router
