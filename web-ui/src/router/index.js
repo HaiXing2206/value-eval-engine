@@ -8,6 +8,7 @@ import Calibers from '../views/Calibers.vue'
 import Tasks from '../views/Tasks.vue'
 import TaskHistory from '../views/TaskHistory.vue'
 import Login from '../views/Login.vue'
+import { canAccessPath, getDefaultPathByRole } from '../auth/roles'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -30,18 +31,23 @@ const router = createRouter({
   ]
 })
 
-
 router.beforeEach((to) => {
   const token = localStorage.getItem('vee_token')
+  const role = localStorage.getItem('vee_role')
+
   if (to.path === '/login') {
     if (token) {
-      return '/dashboard'
+      return getDefaultPathByRole(role)
     }
     return true
   }
 
   if (!token) {
     return '/login'
+  }
+
+  if (!canAccessPath(role, to.path)) {
+    return getDefaultPathByRole(role)
   }
 
   return true

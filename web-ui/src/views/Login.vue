@@ -14,32 +14,41 @@
           <el-input v-model="form.password" type="password" show-password placeholder="请输入密码" clearable />
         </el-form-item>
 
+        <el-form-item label="角色" prop="role">
+          <el-select v-model="form.role" style="width: 100%;" placeholder="请选择角色">
+            <el-option v-for="item in ROLE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" style="width: 100%;" @click="onSubmit">登录</el-button>
         </el-form-item>
       </el-form>
 
-      <div class="tip">演示账号：admin / 123456</div>
+      <div class="tip">演示账号：admin / 123456（四种角色均可登录）</div>
     </el-card>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { ROLE_OPTIONS, getDefaultPathByRole } from '../auth/roles'
 
 const router = useRouter()
 const formRef = ref()
 
 const form = reactive({
   username: '',
-  password: ''
+  password: '',
+  role: 'evaluator'
 })
 
 const rules = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  role: [{ required: true, message: '请选择角色', trigger: 'change' }]
 }
 
 const onSubmit = async () => {
@@ -51,8 +60,9 @@ const onSubmit = async () => {
   if (form.username === 'admin' && form.password === '123456') {
     localStorage.setItem('vee_token', 'demo-token')
     localStorage.setItem('vee_user', form.username)
+    localStorage.setItem('vee_role', form.role)
     ElMessage.success('登录成功')
-    router.push('/dashboard')
+    router.push(getDefaultPathByRole(form.role))
     return
   }
 
