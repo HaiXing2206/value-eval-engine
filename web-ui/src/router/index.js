@@ -7,10 +7,15 @@ import Weights from '../views/Weights.vue'
 import Calibers from '../views/Calibers.vue'
 import Tasks from '../views/Tasks.vue'
 import TaskHistory from '../views/TaskHistory.vue'
+import Login from '../views/Login.vue'
+import Register from '../views/Register.vue'
+import { canAccessPath, getDefaultPathByRole } from '../auth/roles'
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes: [
+    { path: '/login', component: Login },
+    { path: '/register', component: Register },
     {
       path: '/',
       component: Layout,
@@ -27,3 +32,27 @@ export default createRouter({
     }
   ]
 })
+
+router.beforeEach((to) => {
+  const token = localStorage.getItem('vee_token')
+  const role = localStorage.getItem('vee_role')
+
+  if (to.path === '/login' || to.path === '/register') {
+    if (token) {
+      return getDefaultPathByRole(role)
+    }
+    return true
+  }
+
+  if (!token) {
+    return '/login'
+  }
+
+  if (!canAccessPath(role, to.path)) {
+    return getDefaultPathByRole(role)
+  }
+
+  return true
+})
+
+export default router
