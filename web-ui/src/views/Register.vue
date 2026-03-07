@@ -2,7 +2,7 @@
   <div class="login-page">
     <el-card class="login-card" shadow="hover">
       <template #header>
-        <div class="login-title">Value Eval Engine 登录</div>
+        <div class="login-title">Value Eval Engine 注册</div>
       </template>
 
       <el-form ref="formRef" :model="form" :rules="rules" label-position="top" @keyup.enter="onSubmit">
@@ -14,6 +14,16 @@
           <el-input v-model="form.password" type="password" show-password placeholder="请输入密码" clearable />
         </el-form-item>
 
+        <el-form-item label="确认密码" prop="confirmPassword">
+          <el-input
+            v-model="form.confirmPassword"
+            type="password"
+            show-password
+            placeholder="请再次输入密码"
+            clearable
+          />
+        </el-form-item>
+
         <el-form-item label="角色" prop="role">
           <el-select v-model="form.role" style="width: 100%;" placeholder="请选择角色">
             <el-option v-for="item in ROLE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
@@ -21,15 +31,13 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" style="width: 100%;" @click="onSubmit">登录</el-button>
+          <el-button type="primary" style="width: 100%;" @click="onSubmit">注册</el-button>
         </el-form-item>
       </el-form>
 
       <div class="tip">
-        演示账号：admin / 123456（四种角色均可登录）
-        <br />
-        没有账号？
-        <el-link type="primary" @click="goRegister">去注册</el-link>
+        已有账号？
+        <el-link type="primary" @click="goLogin">去登录</el-link>
       </div>
     </el-card>
   </div>
@@ -39,8 +47,8 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
-import { ROLE_OPTIONS, getDefaultPathByRole } from '../auth/roles'
-import { verifyUser } from '../auth/users'
+import { ROLE_OPTIONS } from '../auth/roles'
+import { registerUser } from '../auth/users'
 
 const router = useRouter()
 const formRef = ref()
@@ -48,12 +56,28 @@ const formRef = ref()
 const form = reactive({
   username: '',
   password: '',
+  confirmPassword: '',
   role: 'evaluator'
 })
+
+const validateConfirmPassword = (_, value, callback) => {
+  if (!value) {
+    callback(new Error('请再次输入密码'))
+    return
+  }
+
+  if (value !== form.password) {
+    callback(new Error('两次输入密码不一致'))
+    return
+  }
+
+  callback()
+}
 
 const rules = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  confirmPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }],
   role: [{ required: true, message: '请选择角色', trigger: 'change' }]
 }
 
@@ -63,20 +87,23 @@ const onSubmit = async () => {
     return
   }
 
-  if (verifyUser({ username: form.username, password: form.password, role: form.role })) {
-    localStorage.setItem('vee_token', 'demo-token')
-    localStorage.setItem('vee_user', form.username)
-    localStorage.setItem('vee_role', form.role)
-    ElMessage.success('登录成功')
-    router.push(getDefaultPathByRole(form.role))
+  const success = registerUser({
+    username: form.username,
+    password: form.password,
+    role: form.role
+  })
+
+  if (!success) {
+    ElMessage.error('用户名已存在，请更换用户名')
     return
   }
 
-  ElMessage.error('用户名、密码或角色不正确')
+  ElMessage.success('注册成功，请登录')
+  router.push('/login')
 }
 
-const goRegister = () => {
-  router.push('/register')
+const goLogin = () => {
+  router.push('/login')
 }
 </script>
 
@@ -105,6 +132,5 @@ const goRegister = () => {
   text-align: center;
   color: #909399;
   font-size: 13px;
-  line-height: 1.8;
 }
 </style>
