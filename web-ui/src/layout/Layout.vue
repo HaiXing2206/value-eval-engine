@@ -39,6 +39,7 @@ const allMenus = [
   { path: '/rules', title: '规则配置' },
   { path: '/weights', title: '权重版本' },
   { path: '/calibers', title: '口径版本' },
+  { path: '/systems', title: '指标体系' },
   { path: '/tasks', title: '评估任务' },
   { path: '/history', title: '任务历史' }
 ]

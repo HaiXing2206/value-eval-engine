@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS t_indicator (
 CREATE TABLE IF NOT EXISTS t_weight_version (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   version_code VARCHAR(64) NOT NULL UNIQUE,
+  system_version_code VARCHAR(64) NULL,
   status VARCHAR(16) NOT NULL DEFAULT 'DRAFT', -- DRAFT/PUBLISHED
   remark VARCHAR(255),
   create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -70,6 +71,28 @@ CREATE TABLE IF NOT EXISTS t_indicator_preprocess_quant (
   outlier_policy VARCHAR(16) NOT NULL DEFAULT 'CLAMP',
   min_val DECIMAL(18,8) NULL,
   max_val DECIMAL(18,8) NULL
+);
+
+CREATE TABLE IF NOT EXISTS t_indicator_system_version (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  version_code VARCHAR(64) NOT NULL UNIQUE,
+  system_name VARCHAR(128) NOT NULL,
+  status VARCHAR(16) NOT NULL DEFAULT 'DRAFT', -- DRAFT/PUBLISHED
+  remark VARCHAR(255),
+  snapshot_json JSON NULL,
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS t_indicator_system_node (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  version_id BIGINT NOT NULL,
+  node_code VARCHAR(64) NOT NULL,
+  parent_code VARCHAR(64) NULL,
+  node_name VARCHAR(128) NOT NULL,
+  indicator_code VARCHAR(64) NULL,
+  sort_no INT NOT NULL DEFAULT 0,
+  UNIQUE KEY uk_system_node (version_id, node_code),
+  CONSTRAINT fk_system_ver FOREIGN KEY (version_id) REFERENCES t_indicator_system_version(id)
 );
 
 CREATE TABLE IF NOT EXISTS t_eval_task (

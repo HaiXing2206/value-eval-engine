@@ -22,6 +22,9 @@ public class WeightVersion {
   @Column(name = "version_code", nullable = false, unique = true, length = 64)
   private String versionCode;
 
+  @Column(name = "system_version_code", length = 64)
+  private String systemVersionCode;
+
   @Column(nullable = false, length = 16)
   private String status = "DRAFT"; // DRAFT/PUBLISHED
 

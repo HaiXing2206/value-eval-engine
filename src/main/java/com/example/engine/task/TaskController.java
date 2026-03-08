@@ -1,6 +1,7 @@
 package com.example.engine.task;
 
 import com.example.engine.common.ApiResp;
+import com.example.engine.task.dto.BatchImportResponse;
 import com.example.engine.task.dto.CalcRequest;
 import com.example.engine.task.dto.CalcResponse;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/task")
@@ -25,10 +27,20 @@ public class TaskController {
   private final ResultRepo resultRepo;
   private final CalcService calcService;
   private final TaskQueryRepo taskQueryRepo;
+  private final TaskImportService taskImportService;
 
   @PostMapping("/calculate")
   public ApiResp<CalcResponse> calculate(@Valid @RequestBody CalcRequest req) {
     return ApiResp.ok(calcService.calculate(req));
+  }
+
+  @PostMapping("/import-file")
+  public ApiResp<BatchImportResponse> importFile(
+      @RequestParam("file") MultipartFile file,
+      @RequestParam(name = "caliberVersionCode") String caliberVersionCode,
+      @RequestParam(name = "taskNamePrefix", required = false) String taskNamePrefix,
+      @RequestParam(name = "mappingJson", required = false) String mappingJson) {
+    return ApiResp.ok(taskImportService.importCsv(file, caliberVersionCode, taskNamePrefix, mappingJson));
   }
 
   @GetMapping("/{taskId}")

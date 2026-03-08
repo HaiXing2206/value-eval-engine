@@ -5,6 +5,7 @@ import Indicators from '../views/Indicators.vue'
 import Rules from '../views/Rules.vue'
 import Weights from '../views/Weights.vue'
 import Calibers from '../views/Calibers.vue'
+import SystemVersions from '../views/SystemVersions.vue'
 import Tasks from '../views/Tasks.vue'
 import TaskHistory from '../views/TaskHistory.vue'
 import Login from '../views/Login.vue'
@@ -26,6 +27,7 @@ const router = createRouter({
         { path: '/rules', component: Rules },
         { path: '/weights', component: Weights },
         { path: '/calibers', component: Calibers },
+        { path: '/systems', component: SystemVersions },
         { path: '/tasks', component: Tasks },
         { path: '/history', component: TaskHistory }
       ]

@@ -16,6 +16,7 @@ export const ROUTE_ROLE_ACCESS = {
   '/rules': ['auditor', 'admin'],
   '/weights': ['auditor', 'admin'],
   '/calibers': ['auditor', 'admin'],
+  '/systems': ['auditor', 'admin'],
   '/tasks': ['evaluator', 'admin'],
   '/history': ['evaluator', 'auditor', 'admin', 'devops']
 }

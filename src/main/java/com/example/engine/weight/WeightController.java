@@ -29,8 +29,9 @@ public class WeightController {
   @PostMapping("/version")
   public ApiResp<WeightVersion> createVersion(
       @RequestParam(name = "versionCode") String versionCode,
+      @RequestParam(name = "systemVersionCode") String systemVersionCode,
       @RequestParam(name = "remark", required = false) String remark) {
-    return ApiResp.ok(service.createVersion(versionCode, remark));
+    return ApiResp.ok(service.createVersion(versionCode, systemVersionCode, remark));
   }
 
   @GetMapping("/version/{versionCode}")

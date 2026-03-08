@@ -8,9 +8,11 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +65,15 @@ public class CalcService {
     List<CalcResponse.Item> items = new ArrayList<>();
 
     var weightsNode = snap.path("weights");
+    Set<String> weightCodes = new LinkedHashSet<>();
+    for (var weightNode : weightsNode) {
+      String code = weightNode.path("indicatorCode").asText();
+      if (code != null && !code.isBlank()) {
+        weightCodes.add(code);
+      }
+    }
+    validateInputKeys(req.getValues(), weightCodes);
+
     for (var weightNode : weightsNode) {
       String code = weightNode.path("indicatorCode").asText();
       BigDecimal w = new BigDecimal(weightNode.path("weight").asText("0"));
@@ -180,12 +191,15 @@ public class CalcService {
   }
 
   private BigDecimal scoreQualFromSnapshot(com.fasterxml.jackson.databind.JsonNode one, String key) {
+    List<String> enums = new ArrayList<>();
     for (var n : one.path("qualMap")) {
+      String enumKey = n.path("enumKey").asText();
+      enums.add(enumKey);
       if (key.equals(n.path("enumKey").asText())) {
         return clamp100(new BigDecimal(n.path("score").asText("0")));
       }
     }
-    return BigDecimal.ZERO;
+    throw new IllegalArgumentException("定性值未命中映射: " + key + "，可选值=" + enums);
   }
 
   private QuantScoreResult scoreQuantFromSnapshot(
@@ -194,7 +208,7 @@ public class CalcService {
     try {
       v = new BigDecimal(String.valueOf(raw).trim());
     } catch (Exception e) {
-      return new QuantScoreResult(null, false, BigDecimal.ZERO);
+      throw new IllegalArgumentException("定量值不是合法数字: " + raw);
     }
 
     if (v.compareTo(BigDecimal.ONE) > 0 && v.compareTo(new BigDecimal("100")) <= 0) {
@@ -231,7 +245,25 @@ public class CalcService {
         return new QuantScoreResult(v.doubleValue(), outlier, s);
       }
     }
-    return new QuantScoreResult(v.doubleValue(), outlier, BigDecimal.ZERO);
+    throw new IllegalArgumentException("定量值未落入评分区间: " + v);
+  }
+
+  private void validateInputKeys(Map<String, Object> values, Set<String> weightCodes) {
+    if (values == null || values.isEmpty()) {
+      return;
+    }
+    List<String> unknown = new ArrayList<>();
+    for (String key : values.keySet()) {
+      if (key == null || key.isBlank()) {
+        continue;
+      }
+      if (!weightCodes.contains(key)) {
+        unknown.add(key);
+      }
+    }
+    if (!unknown.isEmpty()) {
+      throw new IllegalArgumentException("输入包含未配置权重的指标: " + unknown);
+    }
   }
 
   private BigDecimal clamp100(BigDecimal s) {
